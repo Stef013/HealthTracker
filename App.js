@@ -14,6 +14,7 @@ import {
   View,
   Text,
   StatusBar,
+  Image,
 } from 'react-native';
 
 import {
@@ -39,8 +40,17 @@ const App = () => {
             </View>
           )}
           <View style={styles.body}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={{
+                  uri:
+                    'https://i.pinimg.com/474x/e3/5f/4f/e35f4fdec41c2e1769da1fe725783c75.jpg',
+                }}
+                style={{ width: '100%', height: '100%' }}
+              />
+            </View>
             <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
+              <Text style={styles.sectionTitle}>Yoooooo</Text>
               <Text style={styles.sectionDescription}>
                 Edit <Text style={styles.highlight}>App.js</Text> to change this
                 screen and then come back to see your edits.
@@ -83,6 +93,11 @@ const styles = StyleSheet.create({
   body: {
     backgroundColor: Colors.white,
   },
+  imageContainer: {
+    marginTop: 32,
+    paddingHorizontal: 24,
+    height: 300,
+  },
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
@@ -108,7 +123,7 @@ const styles = StyleSheet.create({
     padding: 4,
     paddingRight: 12,
     textAlign: 'right',
-  },
+  }
 });
 
 export default App;
