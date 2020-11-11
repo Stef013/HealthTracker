@@ -1,11 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
 import {
   SafeAreaView,
@@ -25,61 +17,79 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const App = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
+import TopBar from './components/TopBar'
+import BottomNav from './components/BottomNav'
+import { BottomNavigation } from 'react-native-paper';
+
+
+export default class App extends React.Component {
+  render() {
+    return (
+
+      <View style={{ flex: 1 }}>
+
+        <TopBar />
+
+        {/* <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.imageContainer}>
-              <Image
-                source={{
-                  uri:
-                    'https://i.pinimg.com/474x/e3/5f/4f/e35f4fdec41c2e1769da1fe725783c75.jpg',
-                }}
-                style={{ width: '100%', height: '100%' }}
-              />
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Yoooooo</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
+
+          <SafeAreaView>
+
+            <View style={styles.body}>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{
+                    uri:
+                      'https://i.pinimg.com/474x/e3/5f/4f/e35f4fdec41c2e1769da1fe725783c75.jpg',
+                  }}
+                  style={{ width: '100%', height: '100%' }}
+                />
+              </View>
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Yoooooo</Text>
+                <Text style={styles.sectionDescription}>
+                  Edit <Text style={styles.highlight}>App.js</Text> to change this
                 screen and then come back to see your edits.
               </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
+              </View>
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Yoooooo</Text>
+                <Text style={styles.sectionDescription}>
+                  Edit <Text style={styles.highlight}>App.js</Text> to change this
+                screen and then come back to see your edits.
               </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
+              </View>
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Yoooooo</Text>
+                <Text style={styles.sectionDescription}>
+                  Edit <Text style={styles.highlight}>App.js</Text> to change this
+                screen and then come back to see your edits.
               </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
+              </View>
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Yoooooo</Text>
+                <Text style={styles.sectionDescription}>
+                  Edit <Text style={styles.highlight}>App.js</Text> to change this
+                screen and then come back to see your edits.
               </Text>
+              </View>
+
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Debug</Text>
+                <Text style={styles.sectionDescription}>
+                  <DebugInstructions />
+                </Text>
+              </View>
             </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
+          </SafeAreaView>
+        </ScrollView> */}
+        <BottomNav />
+
+
+      </View>
+    );
+  };
 };
 
 const styles = StyleSheet.create({
@@ -125,5 +135,3 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   }
 });
-
-export default App;
