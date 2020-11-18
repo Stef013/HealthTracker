@@ -1,137 +1,115 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  Image,
-} from 'react-native';
+
+// import {
+//   SafeAreaView,
+//   StyleSheet,
+//   ScrollView,
+//   View,
+//   Text,
+//   StatusBar,
+//   Image,
+// } from 'react-native';
+
+// import TopBar from './src/components/TopBar'
+// import BottomNav from './src/components/BottomNav'
+
+
+// export default class App extends React.Component {
+//   render() {
+//     return (
+
+//       <View style={{ flex: 1 }}>
+
+//         <TopBar />
+//         <BottomNav />
+
+
+//       </View>
+//     );
+//   };
+// };
 
 import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  NavigationContainer,
+  DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme,
+} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { TouchableOpacity, View, Text } from 'react-native';
+import {
+  Button,
+  DarkTheme as PaperDarkTheme,
+  DefaultTheme as PaperDefaultTheme,
+  Provider as PaperProvider,
+  Title,
+} from 'react-native-paper';
 
-import TopBar from './src/components/TopBar'
+import merge from 'deepmerge';
 import BottomNav from './src/components/BottomNav'
-import { BottomNavigation } from 'react-native-paper';
+import Nutrition from './src/screens/Nutrition';
+import Timeline from './src/screens/Timeline';
+import { Header } from 'react-native/Libraries/NewAppScreen';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
 
-export default class App extends React.Component {
-  render() {
-    return (
+const CombinedDefaultTheme = merge(PaperDefaultTheme, NavigationDefaultTheme);
+const CombinedDarkTheme = merge(PaperDarkTheme, NavigationDarkTheme);
 
-      <View style={{ flex: 1 }}>
-
-        <TopBar />
-
-        {/* <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-
-          <SafeAreaView>
-
-            <View style={styles.body}>
-              <View style={styles.imageContainer}>
-                <Image
-                  source={{
-                    uri:
-                      'https://i.pinimg.com/474x/e3/5f/4f/e35f4fdec41c2e1769da1fe725783c75.jpg',
-                  }}
-                  style={{ width: '100%', height: '100%' }}
-                />
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Yoooooo</Text>
-                <Text style={styles.sectionDescription}>
-                  Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Yoooooo</Text>
-                <Text style={styles.sectionDescription}>
-                  Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Yoooooo</Text>
-                <Text style={styles.sectionDescription}>
-                  Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-              </View>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Yoooooo</Text>
-                <Text style={styles.sectionDescription}>
-                  Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-              </View>
-
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Debug</Text>
-                <Text style={styles.sectionDescription}>
-                  <DebugInstructions />
-                </Text>
-              </View>
-            </View>
-          </SafeAreaView>
-        </ScrollView> */}
-        <BottomNav />
-
-
-      </View>
-    );
-  };
+const theme = {
+  ...CombinedDefaultTheme,
+  roundness: 2,
+  colors: {
+    ...CombinedDefaultTheme.colors,
+    primary: '#1ba12e',
+    accent: '#1ba12e',
+  },
 };
 
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  imageContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-    height: 300,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  }
-});
+
+const Stack = createStackNavigator();
+
+export const HomeScreen = ({ navigation }) => {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+
+      <Button
+        mode="contained"
+        onPress={() => navigation.navigate('Root')}
+      >
+        Details
+        </Button>
+    </View>
+  );
+}
+const Tab = createMaterialBottomTabNavigator();
+
+function Root() {
+  return (
+    <Tab.Navigator initialRouteName="Nutrition">
+      <Tab.Screen name="Nutrition" component={Nutrition} />
+      <Tab.Screen name="Timeline" component={Timeline} />
+    </Tab.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+    <PaperProvider theme={theme}>
+      <NavigationContainer theme={theme}>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeScreen} options={{
+            headerStyle: {
+              backgroundColor: '#1ba12e',
+            },
+          }} />
+          <Stack.Screen name="Root" component={Root} />
+
+        </Stack.Navigator>
+
+      </NavigationContainer>
+
+    </PaperProvider>
+  );
+}
+
+
