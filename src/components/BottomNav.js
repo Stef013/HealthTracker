@@ -3,28 +3,25 @@ import { BottomNavigation, Text } from 'react-native-paper';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import Nutrition from '../screens/Nutrition'
 import Timeline from '../screens/Timeline'
+import Account from '../screens/Account'
+import { HeaderTitle } from '@react-navigation/stack';
 
 const Tab = createMaterialBottomTabNavigator();
 
-// function Tabs() {
-//     return (
+export default function BottomNav() {
 
-//     );
-// };
-
-export default class BottomNav extends React.Component {
-    render() {
         return (
             <Tab.Navigator
                 initialRouteName="Nutrition"
                 shifting={true}
-                sceneAnimationEnabled={false}
+                sceneAnimationEnabled={true}
+                
             >
                 <Tab.Screen
                     name="Nutrition"
                     component={Nutrition}
                     options={{
-                        tabBarIcon: 'apple'
+                        tabBarIcon: 'apple',
                     }}
                 />
                 <Tab.Screen
@@ -32,53 +29,15 @@ export default class BottomNav extends React.Component {
                     component={Timeline}
                     options={{
                         tabBarIcon: 'chart-bar'
-
+                    }}
+                />
+                 <Tab.Screen
+                    name="Account"
+                    component={Account}
+                    options={{
+                        tabBarIcon: 'account'
                     }}
                 />
             </Tab.Navigator>
         );
-    }
 }
-// const NutritionRoute = () => <Nutrition />;
-
-// const TimelineRoute = () => <Text>Graph</Text>;
-
-// const AccountRoute = () => <Text>Settings</Text>;
-
-// export default class BottomNav extends React.Component {
-//     state = {
-//         index: 0,
-//         routes: [
-//             { key: 'nutrition', title: 'Nutrition', icon: 'apple' },
-//             { key: 'timeline', title: 'Timeline', icon: 'chart-bar' },
-//             { key: 'account', title: 'Account', icon: 'account' },
-//         ],
-//     };
-
-//     _handleIndexChange = index => this.setState({ index });
-
-//     // _renderScene = BottomNavigation.SceneMap({
-//     //     nutrition: NutritionRoute,
-//     //     timeline: TimelineRoute,
-//     //     account: AccountRoute,
-//     // });
-
-//     renderScene = ({ route, jumpTo }) => {
-//         switch (route.key) {
-//             case 'nutrition':
-//                 return <Nutrition jumpTo={jumpTo} />;
-
-//         }
-//     }
-
-//     render() {
-//         return (
-//             <BottomNavigation
-//                 navigationState={this.state}
-//                 onIndexChange={this._handleIndexChange}
-//                 renderScene={this.renderScene}
-//                 shifting={true}
-//             />
-//         );
-//     }
-// }

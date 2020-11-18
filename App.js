@@ -1,41 +1,17 @@
 import React from 'react';
 
-// import {
-//   SafeAreaView,
-//   StyleSheet,
-//   ScrollView,
-//   View,
-//   Text,
-//   StatusBar,
-//   Image,
-// } from 'react-native';
 
-// import TopBar from './src/components/TopBar'
-// import BottomNav from './src/components/BottomNav'
-
-
-// export default class App extends React.Component {
-//   render() {
-//     return (
-
-//       <View style={{ flex: 1 }}>
-
-//         <TopBar />
-//         <BottomNav />
-
-
-//       </View>
-//     );
-//   };
-// };
-
+//Navigation
 import {
   NavigationContainer,
+  getFocusedRouteNameFromRoute,
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { TouchableOpacity, View, Text } from 'react-native';
+
+//UI
+import { View } from 'react-native';
 import {
   Button,
   DarkTheme as PaperDarkTheme,
@@ -43,14 +19,10 @@ import {
   Provider as PaperProvider,
   Title,
 } from 'react-native-paper';
-
 import merge from 'deepmerge';
-import BottomNav from './src/components/BottomNav'
-import Nutrition from './src/screens/Nutrition';
-import Timeline from './src/screens/Timeline';
-import { Header } from 'react-native/Libraries/NewAppScreen';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
+//Components
+import BottomNav from './src/components/BottomNav'
 
 const CombinedDefaultTheme = merge(PaperDefaultTheme, NavigationDefaultTheme);
 const CombinedDarkTheme = merge(PaperDarkTheme, NavigationDarkTheme);
@@ -65,30 +37,39 @@ const theme = {
   },
 };
 
+function getHeaderTitle(route) {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Nutrition';
+
+  switch (routeName) {
+    case 'Nutrition':
+      return 'Nutrition';
+    case 'Timeline':
+      return 'Timeline';
+    case 'Account':
+      return 'Account Settings';
+  }
+}
 
 const Stack = createStackNavigator();
 
 export const HomeScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-
       <Button
         mode="contained"
         onPress={() => navigation.navigate('Root')}
       >
-        Details
+        Login
         </Button>
     </View>
   );
 }
-const Tab = createMaterialBottomTabNavigator();
 
 function Root() {
   return (
-    <Tab.Navigator initialRouteName="Nutrition">
-      <Tab.Screen name="Nutrition" component={Nutrition} />
-      <Tab.Screen name="Timeline" component={Timeline} />
-    </Tab.Navigator>
+    <PaperProvider theme={theme}>
+      <BottomNav />
+    </PaperProvider>
   );
 }
 
@@ -98,18 +79,18 @@ export default function App() {
       <NavigationContainer theme={theme}>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} options={{
+            headerShown: false,
+
+          }} />
+          <Stack.Screen name="Root" component={Root} options={({ route }) => ({
+            headerTitle: getHeaderTitle(route),
+            headerTintColor: '#FFF',
             headerStyle: {
               backgroundColor: '#1ba12e',
-            },
-          }} />
-          <Stack.Screen name="Root" component={Root} />
-
+            }
+          })} />
         </Stack.Navigator>
-
       </NavigationContainer>
-
     </PaperProvider>
   );
 }
-
-

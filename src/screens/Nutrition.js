@@ -7,14 +7,13 @@ export default class Nutrition extends React.Component {
     render() {
         return (
             <View style={{ flex: 1 }}>
-                <Text>OMEGALUL</Text>
+                <Text>Nutrition</Text>
 
                 <FAB
                     style={styles.fab}
                     icon="plus"
                     onPress={() => console.log('Pressed')}
                 />
-                <BottomNav />
             </View>
         );
     }
