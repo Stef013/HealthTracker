@@ -1,28 +1,28 @@
 import * as React from 'react';
 import { BottomNavigation, Text } from 'react-native-paper';
 
-const MusicRoute = () => <Text>Music</Text>;
+const NutritionRoute = () => <Text>Nutrition</Text>;
 
-const AlbumsRoute = () => <Text>Albums</Text>;
+const TimelineRoute = () => <Text>Graph</Text>;
 
-const RecentsRoute = () => <Text>Recents</Text>;
+const AccountRoute = () => <Text>Settings</Text>;
 
 export default class BottomNav extends React.Component {
     state = {
         index: 0,
         routes: [
-            { key: 'music', title: 'Music', icon: 'music' },
-            { key: 'albums', title: 'Albums', icon: 'album' },
-            { key: 'recents', title: 'Recents', icon: 'history' },
+            { key: 'nutrition', title: 'Nutrition', icon: 'apple' },
+            { key: 'timeline', title: 'Timeline', icon: 'chart-bar' },
+            { key: 'account', title: 'Account', icon: 'account' },
         ],
     };
 
     _handleIndexChange = index => this.setState({ index });
 
     _renderScene = BottomNavigation.SceneMap({
-        music: MusicRoute,
-        albums: AlbumsRoute,
-        recents: RecentsRoute,
+        nutrition: NutritionRoute,
+        timeline: TimelineRoute,
+        account: AccountRoute,
     });
 
     render() {

@@ -17,8 +17,8 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import TopBar from './components/TopBar'
-import BottomNav from './components/BottomNav'
+import TopBar from './src/components/TopBar'
+import BottomNav from './src/components/BottomNav'
 import { BottomNavigation } from 'react-native-paper';
 
 
