@@ -7,8 +7,6 @@ const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 const TopBar = ({ scene }) => {
     const _goBack = () => console.log('Went back');
 
-    const _handleSearch = () => console.log('Searching');
-
     const _handleMore = () => console.log('Shown more');
 
     return (
