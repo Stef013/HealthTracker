@@ -19,11 +19,5 @@ export default Theme = {
         ...CombinedDefaultTheme.colors,
         primary: '#09961d',
         accent: '#09961d',
-    },
-    font: {
-        regular: {
-            fontSize: 50,
-            color: 'blue',
-        }
     }
 };

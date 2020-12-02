@@ -7,12 +7,14 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 export default LoginScreen = ({ navigation }) => {
     return (
         <View style={{ flex: 1, backgroundColor: "#09961d" }}>
-            <StatusBar backgroundColor="#077817" barStyle="light-content" />
+            <StatusBar backgroundColor="#09961d" barStyle="light-content" />
+
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Icon name="food-apple" size={50} color="white" >
                     <Title style={styles.title}>HealthTracker</Title>
                 </Icon>
             </View>
+
             <View style={{ flex: 1, alignItems: 'center' }}>
                 <Button
                     mode="contained"
@@ -21,7 +23,7 @@ export default LoginScreen = ({ navigation }) => {
                     style={{ width: 150 }}
                 >
                     Login
-          </Button>
+                </Button>
             </View>
         </View>
     );

@@ -1,11 +1,27 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { FAB, Text, Headline, Paragraph, Subheading, Divider } from 'react-native-paper';
+import { StyleSheet, View, StatusBar } from 'react-native';
+import { FAB, Text, Headline, Paragraph, Subheading, Divider, Button } from 'react-native-paper';
+import Camera from '../components/Camera'
+import { RNCamera } from 'react-native-camera';
 
 export default class Nutrition extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isCameraVisible: false
+        }
+    }
+
+    showCameraView = () => {
+        this.props.navigation.navigate('Camera')
+    }
+
     render() {
+        const { isCameraVisible } = this.state;
         return (
             <View style={{ flex: 1 }}>
+                <StatusBar backgroundColor="#09961d" barStyle="light-content" />
+
                 <View style={{ alignItems: 'center' }}>
                     <Headline style={styles.header}>Today's Nutrition Score:</Headline>
 
@@ -18,8 +34,9 @@ export default class Nutrition extends React.Component {
                 <FAB
                     style={styles.fab}
                     icon="plus"
-                    onPress={() => console.log('Pressed')}
+                    onPress={this.showCameraView}
                 />
+
             </View>
         );
     }
@@ -47,4 +64,20 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0
     },
+    container: {
+        flex: 1,
+    },
+    preview: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center'
+    },
+    capture: {
+        flex: 0,
+        backgroundColor: '#fff',
+        borderRadius: 5,
+        color: '#000',
+        padding: 10,
+        margin: 40
+    }
 })

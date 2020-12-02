@@ -14,6 +14,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import BottomNav from './src/components/BottomNav'
 import Theme from './src/assets/theme'
 import LoginScreen from './src/screens/LoginScreen'
+import Camera from './src/components/Camera'
 
 function getHeaderTitle(route) {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Nutrition';
@@ -53,6 +54,9 @@ export default function App() {
               backgroundColor: '#09961d',
             }
           })} />
+          <Stack.Screen name="Camera" component={Camera} options={{
+            headerShown: false,
+          }} />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>

@@ -72,5 +72,7 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+	‍<key>NSCameraUsageDescription</key>
+	<string>HealthTracker wants to use your camera.</string>
 </dict>
 </plist>
