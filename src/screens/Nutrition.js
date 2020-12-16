@@ -33,7 +33,7 @@ export default class Nutrition extends React.Component {
 
                 <FAB
                     style={styles.fab}
-                    icon="plus"
+                    icon="barcode-scan"
                     onPress={this.showCameraView}
                 />
 

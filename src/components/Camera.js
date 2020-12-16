@@ -96,7 +96,7 @@ export default class Camera extends React.Component {
                     {showLoading &&
                         <View>
                             {isLoading ? <ActivityIndicator large /> : (
-                                <ScanPopup data={data} />
+                                <ScanPopup data={data} navigation={this.props.navigation} />
                             )}
                         </View>
                     }

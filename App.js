@@ -14,6 +14,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import BottomNav from './src/components/BottomNav'
 import Theme from './src/assets/theme'
 import LoginScreen from './src/screens/LoginScreen'
+import ProductScreen from './src/screens/Product'
 import Camera from './src/components/Camera'
 
 function getHeaderTitle(route) {
@@ -26,6 +27,8 @@ function getHeaderTitle(route) {
       return 'Timeline';
     case 'Account':
       return 'Account Settings';
+    case 'Product':
+      return 'Product';
   }
 }
 
@@ -57,6 +60,13 @@ export default function App() {
           <Stack.Screen name="Camera" component={Camera} options={{
             headerShown: false,
           }} />
+          <Stack.Screen name="Product" component={ProductScreen} options={({ route }) => ({
+            headerTitle: "Product",
+            headerTintColor: '#FFF',
+            headerStyle: {
+              backgroundColor: '#09961d',
+            }
+          })} />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
