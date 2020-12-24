@@ -3,6 +3,8 @@ import { StyleSheet, View, StatusBar, Image } from 'react-native';
 import { FAB, Text, Headline, Paragraph, Subheading, Divider, Button } from 'react-native-paper';
 import Camera from '../components/Camera'
 import { RNCamera } from 'react-native-camera';
+import Realm from 'realm';
+import { ProductSchema, ConsumedSchema } from '../models/RealmSchemas'
 
 export default class Product extends React.Component {
     constructor(props) {
@@ -21,6 +23,29 @@ export default class Product extends React.Component {
 
     showCameraView = () => {
         this.props.navigation.navigate('Camera')
+    }
+
+    saveProduct = () => {
+        console.log('hoi');
+        Realm.open({ schema: [ProductSchema, ConsumedSchema] })
+            .then(realm => {
+                realm.write(() => {
+                    const prod = realm.create('Product_', {
+                        name: this.product.generic_name,
+                        origin: this.product.origins,
+                        barcode: 'testcode',
+                        grade: this.product.nutriscore_grade,
+                    });
+                });
+                const products = realm.objects('Product_');
+                products.length;
+                console.log(products.length)
+
+                realm.close();
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     render() {
@@ -43,7 +68,6 @@ export default class Product extends React.Component {
                             <Text style={styles.score}>{this.product.nutriscore_grade}</Text>
                         </View>
                     </View>
-
                 </View>
 
                 <Divider style={styles.divider} />
@@ -63,17 +87,12 @@ export default class Product extends React.Component {
                         {
                             icon: 'plus',
                             label: '1 PORTION',
-                            onPress: () => console.log('Pressed Portion'),
+                            onPress: () => this.showCameraView,
                         },
                     ]}
                     onStateChange={this.onStateChange}
-                    onPress={() => {
-                        if (open) {
-                            // do something if the speed dial is open
-                        }
-                    }}
+                    onPress={this.saveProduct}
                 />
-
             </View>
         );
     }
