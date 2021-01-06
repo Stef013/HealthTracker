@@ -8,6 +8,7 @@ export const ProductSchema = {
     origin: 'string',
     barcode: 'string',
     grade: 'string',
+
   }
 };
 
