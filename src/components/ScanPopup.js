@@ -37,7 +37,7 @@ const ScanPopup = (props) => {
                     <Dialog visible={visible} onDismiss={hideDialog}>
                         <Dialog.Title>{props.data.status_verbose}</Dialog.Title>
                         <Dialog.Content>
-                            <Paragraph>Product: {props.data.product.generic_name}</Paragraph>
+                            <Paragraph>{props.data.product.product_name}</Paragraph>
                         </Dialog.Content>
                         <Dialog.Actions>
                             <Button onPress={hideDialog}>Cancel</Button>

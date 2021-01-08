@@ -13,7 +13,7 @@ export default class Product extends React.Component {
         this.state = {
             open: false,
         }
-        console.log(this.product.generic_name)
+        console.log(this.product.product_name)
     }
 
     // getNutriScore = () => {
@@ -40,15 +40,15 @@ export default class Product extends React.Component {
     getNutriScore = () => {
         switch (this.product.nutriscore_grade) {
             case "a":
-                return <Text style={styles.scoreA}>{this.product.nutriscore_grade}</Text>
+                return <Text style={styles.scoreA}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
             case "b":
-                return <Text style={styles.scoreB}>{this.product.nutriscore_grade}</Text>
+                return <Text style={styles.scoreB}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
             case "c":
-                return <Text style={styles.scoreC}>{this.product.nutriscore_grade}</Text>
+                return <Text style={styles.scoreC}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
             case "d":
-                return <Text style={styles.scoreD}>{this.product.nutriscore_grade}</Text>
+                return <Text style={styles.scoreD}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
             case "e":
-                return <Text style={styles.scoreE}>{this.product.nutriscore_grade}</Text>
+                return <Text style={styles.scoreE}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
         }
     }
 
@@ -64,7 +64,7 @@ export default class Product extends React.Component {
             .then(realm => {
                 realm.write(() => {
                     const prod = realm.create('Product_', {
-                        name: this.product.generic_name,
+                        name: this.product.product_name,
                         origin: this.product.origins,
                         barcode: 'testcode',
                         grade: this.product.nutriscore_grade,
@@ -81,6 +81,50 @@ export default class Product extends React.Component {
             });
     }
 
+    Capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    formatAllergens(str) {
+        var count = 0;
+        if (str !== null || str !== "") {
+            while (str.includes("en:")) {
+                if (count === 0) {
+                    str = str.replace("en:", "");
+                }
+                else {
+                    str = str.replace("en:", " ");
+                }
+                count++;
+
+            }
+        }
+        else {
+            str = "No allergens included."
+        }
+
+        console.log(str)
+        return str;
+    }
+
+    formatStores(str) {
+        if (str !== null || str !== "") {
+            while (str.includes(",")) {
+                str = str.replace(",", "; ");
+            }
+            while (str.includes(";")) {
+                str = str.replace(";", ", ");
+            }
+
+        }
+        else {
+            str = "Unknown"
+        }
+
+        console.log(str)
+        return str;
+    }
+
     render() {
         const { open } = this.state;
         return (
@@ -92,14 +136,17 @@ export default class Product extends React.Component {
 
                         <Image source={{ uri: this.product.image_url }} style={styles.image} />
 
-                        <View style={{ flexDirection: 'column', textAlign: 'left', width: "50%" }}>
-                            <Headline style={styles.header}>{this.product.generic_name}</Headline>
+                        <View style={{ flexDirection: 'column', textAlign: 'left', width: "55%" }}>
+                            <Headline style={styles.header}>{this.product.product_name}</Headline>
+                            <Subheading>Brand: {this.Capitalize(this.product.brands)}</Subheading>
+                            {/* <Subheading >Origin: {this.product.origins}</Subheading> */}
+                            <Subheading >Category: {this.product.pnns_groups_2}</Subheading>
+                            <Subheading >Stores: {this.formatStores(this.product.stores)}</Subheading>
 
-                            <Subheading>{this.product.brands}</Subheading>
-                            <Subheading >Origin: {this.product.origins}</Subheading>
 
-                            <View style={{ flexDirection: 'row' }}>
-                                <Subheading style={{ lineHeight: 52, marginRight: 20 }} >Nutrition Score:</Subheading>
+
+                            <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                                <Subheading style={{ lineHeight: 40, marginRight: 20 }} >Nutrition Score:</Subheading>
                                 {this.getNutriScore()}
                             </View>
                         </View>
@@ -109,6 +156,8 @@ export default class Product extends React.Component {
                     <View style={{ marginLeft: 10, marginTop: 20, marginRight: 10 }}>
                         <Subheading>Ingredients:</Subheading>
                         <Paragraph>{this.product.ingredients_text}</Paragraph>
+                        <Subheading style={{ marginTop: 15 }}>Allergens:</Subheading>
+                        <Paragraph>{this.formatAllergens(this.product.allergens)}</Paragraph>
                     </View>
 
                     <Divider style={styles.divider} />
@@ -119,8 +168,8 @@ export default class Product extends React.Component {
                     <DataTable style={{ marginBottom: 70 }}>
                         <DataTable.Header>
                             <DataTable.Title>Nutrient</DataTable.Title>
-                            <DataTable.Title numeric>100g</DataTable.Title>
-                            <DataTable.Title numeric>Serving</DataTable.Title>
+                            <DataTable.Title numeric>{this.product.nutrition_data_per}</DataTable.Title>
+                            <DataTable.Title numeric>Serving ({this.product.serving_size})</DataTable.Title>
                         </DataTable.Header>
 
                         <DataTable.Row>
@@ -202,38 +251,38 @@ const styles = StyleSheet.create({
         color: "#616161",
     },
     scoreA: {
-        fontSize: 52,
-        lineHeight: 52,
-        color: "green",
+        fontSize: 42,
+        lineHeight: 50,
+        color: "#038141",
         alignSelf: 'center'
     },
     scoreB: {
-        fontSize: 52,
-        lineHeight: 52,
-        color: "#74e815",
+        fontSize: 42,
+        lineHeight: 46,
+        color: "#85bb2f",
         alignSelf: 'center'
     },
     scoreC: {
-        fontSize: 52,
-        lineHeight: 52,
-        color: "#e8da09",
+        fontSize: 42,
+        lineHeight: 50,
+        color: "#f5cd02",
         alignSelf: 'center'
     },
     scoreD: {
-        fontSize: 52,
-        lineHeight: 52,
-        color: "orange",
+        fontSize: 42,
+        lineHeight: 50,
+        color: "#ee8100",
         alignSelf: 'center'
     },
     scoreE: {
-        fontSize: 52,
-        lineHeight: 52,
-        color: "#d40000",
+        fontSize: 42,
+        lineHeight: 50,
+        color: "#e63e11",
         alignSelf: 'center'
     },
     divider: {
         height: 1,
-        width: 360,
+        width: "100%",
         marginTop: 30,
         alignSelf: 'center'
     },
@@ -261,6 +310,6 @@ const styles = StyleSheet.create({
     image: {
         width: "40%",
         resizeMode: "contain",
-        marginRight: 15,
+        marginRight: 10,
     }
 })
