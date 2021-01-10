@@ -49,9 +49,7 @@ export default class Camera extends React.Component {
     }
 
     getProduct(barcode) {
-        //const API = 'https://world.openfoodfacts.org/api/v0/product/737628064502.json'
         const API = 'https://world.openfoodfacts.org/api/v0/product/' + barcode + '.json'
-
 
         fetch(API, {
             method: 'get',
@@ -66,9 +64,8 @@ export default class Camera extends React.Component {
             })
             .catch((error) => console.error(error))
             .finally(() => {
-                this.setState({ isLoading: false, });
+                this.setState({ isLoading: false });
                 this.barcode = [];
-
             });
     }
 

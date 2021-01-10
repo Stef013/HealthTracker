@@ -1,15 +1,10 @@
 import * as React from 'react';
 import { StyleSheet, View, StatusBar } from 'react-native';
 import { FAB, Text, Headline, Paragraph, Subheading, Divider, Button } from 'react-native-paper';
-import Camera from '../components/Camera'
-import { RNCamera } from 'react-native-camera';
 
 export default class Nutrition extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            isCameraVisible: false
-        }
     }
 
     showCameraView = () => {
@@ -17,7 +12,6 @@ export default class Nutrition extends React.Component {
     }
 
     render() {
-        const { isCameraVisible } = this.state;
         return (
             <View style={{ flex: 1 }}>
                 <StatusBar backgroundColor="#09961d" barStyle="light-content" />

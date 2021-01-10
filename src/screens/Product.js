@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { StyleSheet, View, StatusBar, Image, ScrollView } from 'react-native';
-import { FAB, Text, Headline, Paragraph, Subheading, Divider, Button, DataTable } from 'react-native-paper';
+import { FAB, Text, Headline, Paragraph, Subheading, Divider, Button, DataTable, ActivityIndicator } from 'react-native-paper';
 import Realm from 'realm';
-import { ProductSchema, ConsumedSchema } from '../models/RealmSchemas'
+import { ConsumedSchema } from '../models/RealmSchemas'
+import SuccessPopup from '../components/SuccessPopup'
+import Moment from 'moment';
 
 export default class Product extends React.Component {
     constructor(props) {
@@ -10,34 +12,17 @@ export default class Product extends React.Component {
 
         this.product = props.route.params.data.product;
 
+        this.saveProduct = this.saveProduct.bind(this);
+
         this.state = {
-            open: false,
-        }
-        console.log(this.product.product_name)
+            success: true,
+            isLoading: true,
+            showLoading: false
+        };
     }
 
-    // getNutriScore = () => {
-    //     console.log(this.product.nutriscore_grade);
-    //     switch (this.product.nutriscore_grade) {
-    //         case "a":
-    //             this.setState({ nutriURL: "https://static.openfoodfacts.org/images/misc/nutriscore-a.svg" })
-    //             break;
-    //         case "b":
-    //             this.setState({ nutriURL: "https://static.openfoodfacts.org/images/misc/nutriscore-b.svg" })
-    //             break;
-    //         case "c":
-    //             this.setState({ nutriURL: "https://static.openfoodfacts.org/images/misc/nutriscore-c.svg" })
-    //             break;
-    //         case "d":
-    //             this.setState({ nutriURL: "https://static.openfoodfacts.org/images/misc/nutriscore-d.svg" })
-    //             break;
-    //         case "e":
-    //             this.setState({ nutriURL: "https://static.openfoodfacts.org/images/misc/nutriscore-e.svg" })
-    //             break;
-    //     }
-    // }
+    getNutriScore() {
 
-    getNutriScore = () => {
         switch (this.product.nutriscore_grade) {
             case "a":
                 return <Text style={styles.scoreA}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
@@ -52,32 +37,35 @@ export default class Product extends React.Component {
         }
     }
 
-    onStateChange = ({ open }) => this.setState({ open });
-
-    showCameraView = () => {
-        this.props.navigation.navigate('Camera')
+    showCameraView() {
+        this.props.navigation.navigate('Camera');
     }
 
-    saveProduct = () => {
-        console.log('hoi');
-        Realm.open({ schema: [ProductSchema, ConsumedSchema] })
+    saveProduct() {
+        this.setState({ showLoading: true })
+        Realm.open({ schema: [ConsumedSchema], schemaVersion: 1 })
             .then(realm => {
                 realm.write(() => {
-                    const prod = realm.create('Product_', {
-                        name: this.product.product_name,
-                        origin: this.product.origins,
-                        barcode: 'testcode',
-                        grade: this.product.nutriscore_grade,
+                    const prod = realm.create('Consumed', {
+                        date: Moment().format("DD/MM/YYYY HH:mm"),
+                        barcode: this.product.code,
+                        product_name: this.product.product_name,
+                        grade: this.Capitalize(this.product.nutriscore_grade),
+                        quantity: this.product.serving_size,
+                        calories: this.product.nutriments['energy-kcal_serving'] + " " + this.product.nutriments['energy-kcal_unit'],
                     });
                 });
-                const products = realm.objects('Product_');
+                const products = realm.objects('Consumed');
                 products.length;
                 console.log(products.length)
 
                 realm.close();
+                this.setState({ isLoading: false });
             })
             .catch(error => {
                 console.log(error);
+                this.setState({ success: false })
+                this.setState({ isLoading: false });
             });
     }
 
@@ -96,14 +84,12 @@ export default class Product extends React.Component {
                     str = str.replace("en:", " ");
                 }
                 count++;
-
             }
         }
         else {
             str = "No allergens included."
         }
 
-        console.log(str)
         return str;
     }
 
@@ -115,18 +101,17 @@ export default class Product extends React.Component {
             while (str.includes(";")) {
                 str = str.replace(";", ", ");
             }
-
         }
         else {
             str = "Unknown"
         }
 
-        console.log(str)
         return str;
     }
 
     render() {
-        const { open } = this.state;
+        const { success, isLoading, showLoading } = this.state;
+
         return (
             <View style={{ flex: 1 }}>
                 <ScrollView>
@@ -139,11 +124,8 @@ export default class Product extends React.Component {
                         <View style={{ flexDirection: 'column', textAlign: 'left', width: "55%" }}>
                             <Headline style={styles.header}>{this.product.product_name}</Headline>
                             <Subheading>Brand: {this.Capitalize(this.product.brands)}</Subheading>
-                            {/* <Subheading >Origin: {this.product.origins}</Subheading> */}
-                            <Subheading >Category: {this.product.pnns_groups_2}</Subheading>
+                            <Subheading >Quantity: {this.product.quantity}</Subheading>
                             <Subheading >Stores: {this.formatStores(this.product.stores)}</Subheading>
-
-
 
                             <View style={{ flexDirection: 'row', marginTop: 10 }}>
                                 <Subheading style={{ lineHeight: 40, marginRight: 20 }} >Nutrition Score:</Subheading>
@@ -165,7 +147,7 @@ export default class Product extends React.Component {
                         <Subheading>Nutrients:</Subheading>
                     </View>
 
-                    <DataTable style={{ marginBottom: 70 }}>
+                    <DataTable style={{ marginBottom: 50 }}>
                         <DataTable.Header>
                             <DataTable.Title>Nutrient</DataTable.Title>
                             <DataTable.Title numeric>{this.product.nutrition_data_per}</DataTable.Title>
@@ -173,72 +155,64 @@ export default class Product extends React.Component {
                         </DataTable.Header>
 
                         <DataTable.Row>
-                            <DataTable.Cell>Energy</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments['energy-kcal_100g']}{this.product.nutriments['energy-kcal_unit']}</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments['energy-kcal_serving']}{this.product.nutriments['energy-kcal_unit']}</DataTable.Cell>
+                            <DataTable.Cell>Calories</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments['energy-kcal_100g']} {this.product.nutriments['energy-kcal_unit']}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments['energy-kcal_serving']} {this.product.nutriments['energy-kcal_unit']}</DataTable.Cell>
                         </DataTable.Row>
                         <DataTable.Row>
                             <DataTable.Cell>Fat</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.fat_100g}{this.product.nutriments.fat_unit}</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.fat_serving}{this.product.nutriments.fat_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.fat_100g} {this.product.nutriments.fat_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.fat_serving} {this.product.nutriments.fat_unit}</DataTable.Cell>
                         </DataTable.Row>
                         <DataTable.Row>
                             <DataTable.Cell>Carbohydrates</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.carbohydrates_100g}{this.product.nutriments.carbohydrates_unit}</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.carbohydrates_serving}{this.product.nutriments.carbohydrates_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.carbohydrates_100g} {this.product.nutriments.carbohydrates_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.carbohydrates_serving} {this.product.nutriments.carbohydrates_unit}</DataTable.Cell>
                         </DataTable.Row>
                         <DataTable.Row>
                             <DataTable.Cell>Protein</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.proteins_100g}{this.product.nutriments.proteins_unit}</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.proteins_serving}{this.product.nutriments.proteins_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.proteins_100g} {this.product.nutriments.proteins_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.proteins_serving} {this.product.nutriments.proteins_unit}</DataTable.Cell>
                         </DataTable.Row>
                         <DataTable.Row>
                             <DataTable.Cell>Salt</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.salt_100g}{this.product.nutriments.salt_unit}</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.salt_serving}{this.product.nutriments.salt_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.salt_100g} {this.product.nutriments.salt_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.salt_serving} {this.product.nutriments.salt_unit}</DataTable.Cell>
                         </DataTable.Row>
                         <DataTable.Row>
                             <DataTable.Cell>Sugar</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.sugars_100g}{this.product.nutriments.sugars_unit}</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.sugars_serving}{this.product.nutriments.sugars_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.sugars_100g} {this.product.nutriments.sugars_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.sugars_serving} {this.product.nutriments.sugars_unit}</DataTable.Cell>
                         </DataTable.Row>
                         <DataTable.Row>
                             <DataTable.Cell>Fiber</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.fiber_100g}{this.product.nutriments.fiber_unit}</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.fiber_serving}{this.product.nutriments.fiber_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.fiber_100g} {this.product.nutriments.fiber_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.fiber_serving} {this.product.nutriments.fiber_unit}</DataTable.Cell>
                         </DataTable.Row>
                         <DataTable.Row>
                             <DataTable.Cell>Calcium</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.calcium_100g}{this.product.nutriments.calcium_unit}</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.calcium_serving}{this.product.nutriments.calcium_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.calcium_100g} {this.product.nutriments.calcium_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.calcium_serving} {this.product.nutriments.calcium_unit}</DataTable.Cell>
                         </DataTable.Row>
                         <DataTable.Row>
                             <DataTable.Cell>Sodium</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.sodium_100g}{this.product.nutriments.sodium_unit}</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.sodium_serving}{this.product.nutriments.sodium_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.sodium_100g} {this.product.nutriments.sodium_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.sodium_serving} {this.product.nutriments.sodium_unit}</DataTable.Cell>
                         </DataTable.Row>
                     </DataTable>
-
-
                 </ScrollView>
-                <FAB.Group
-                    open={open}
-                    icon={open ? 'food-variant' : 'plus'}
-                    label="ADD"
-                    actions={[
-                        {
-                            icon: 'plus',
-                            label: 'ALL',
-                            onPress: () => console.log('Pressed ALL'),
-                        },
-                        {
-                            icon: 'plus',
-                            label: '1 Serving',
-                            onPress: () => this.showCameraView,
-                        },
-                    ]}
-                    onStateChange={this.onStateChange}
+                {showLoading &&
+                    <View>
+                        {isLoading ? <ActivityIndicator large /> : (
+                            <SuccessPopup success={success} navigation={this.props.navigation} />
+                        )}
+                    </View>
+                }
+                <FAB
+                    style={styles.fab}
+                    icon="plus"
                     onPress={this.saveProduct}
+                    label="ADD"
                 />
             </View >
         );
@@ -289,6 +263,7 @@ const styles = StyleSheet.create({
     fab: {
         position: 'absolute',
         margin: 16,
+        right: 0,
         bottom: 0
     },
     container: {
