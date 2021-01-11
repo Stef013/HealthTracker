@@ -8,7 +8,7 @@ export default class Nutrition extends React.Component {
     }
 
     showCameraView = () => {
-        this.props.navigation.navigate('Camera')
+        this.props.navigation.navigate('Camera');
     }
 
     render() {

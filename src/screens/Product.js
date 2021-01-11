@@ -22,7 +22,6 @@ export default class Product extends React.Component {
     }
 
     getNutriScore() {
-
         switch (this.product.nutriscore_grade) {
             case "a":
                 return <Text style={styles.scoreA}>{this.Capitalize(this.product.nutriscore_grade)}</Text>

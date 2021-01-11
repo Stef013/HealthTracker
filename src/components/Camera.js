@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { StyleSheet, View, StatusBar, Alert } from 'react-native';
-import { Button, Title, Text, ActivityIndicator } from 'react-native-paper';
+import { StyleSheet, View, StatusBar } from 'react-native';
+import { Button, ActivityIndicator } from 'react-native-paper';
 import { RNCamera } from 'react-native-camera';
 import ScanPopup from './ScanPopup'
 
@@ -11,8 +11,8 @@ export default class Camera extends React.Component {
 
         this.state = {
             data: [],
-            isLoading: true,
-            showLoading: false
+            isLoading: false,
+            showError: false,
         };
     }
 
@@ -20,30 +20,19 @@ export default class Camera extends React.Component {
         this.props.navigation.navigate('Nutrition');
     }
 
+    navigateProduct = () => {
+        this.setState({ isLoading: false });
+        this.props.navigation.navigate('Product', { data: this.state.data });
+    }
+
     onBarCodeRead(scanResult) {
-        console.log(scanResult.type);
-        console.log(scanResult.data);
+        console.log("Type: " + scanResult.type);
+        console.log("Scanned Barcode: " + scanResult.data);
+        this.setState({ showError: false });
         if (scanResult.data != null) {
-            if (!this.barcode.includes(scanResult.data)) {
-                this.barcode.push(scanResult.data);
-
-                this.setState({ showLoading: true })
-
-                this.getProduct(this.barcode);
-
-                // Alert.alert(
-                //     "Barcode type is " + scanResult.type,
-                //     "Barcode value is " + scanResult.data,
-                //     [
-                //         {
-                //             text: "OK",
-                //             onPress: () => this.barcode = [],
-                //             style: "cancel"
-                //         }
-                //     ],
-                //     { cancelable: false },
-                // );
-            }
+            this.barcode.push(scanResult.data);
+            this.setState({ isLoading: true });
+            this.getProduct(this.barcode);
         }
         return;
     }
@@ -54,23 +43,29 @@ export default class Camera extends React.Component {
         fetch(API, {
             method: 'get',
             headers: {
-                'User-Agent': 'HealthTracker - Android - Version 0.3'
+                'User-Agent': 'HealthTracker - Android - Version 0.6'
             }
         }).then((response) => response.json())
             .then((json) => {
                 this.setState({ data: json });
-                console.log(json.status_verbose)
-                console.log(json.code)
+                console.log("Status: " + json.status_verbose)
+                console.log("Product : " + json.code)
             })
             .catch((error) => console.error(error))
             .finally(() => {
-                this.setState({ isLoading: false });
+                if (this.state.data.status_verbose === "product found") {
+                    this.navigateProduct();
+                }
+                else {
+                    this.setState({ isLoading: false });
+                    this.setState({ showError: true });
+                }
                 this.barcode = [];
             });
     }
 
     render() {
-        const { data, isLoading, showLoading } = this.state;
+        const { data, isLoading, showError } = this.state;
 
         return (
             <View style={styles.container}>
@@ -89,19 +84,16 @@ export default class Camera extends React.Component {
                         buttonPositive: 'Ok',
                         buttonNegative: 'Cancel',
                     }}>
-                    {showLoading &&
-                        <View>
-                            {isLoading ? <ActivityIndicator large /> : (
-                                <ScanPopup data={data} navigation={this.props.navigation} />
-                            )}
-                        </View>
+
+                    <Button mode="outlined" color='#000000' style={styles.backButton} onPress={this.hideCameraView} >Back</Button>
+
+                    {isLoading && <View style={styles.loading}>
+                        <ActivityIndicator color="white" size='large' />
+                    </View>
                     }
-                    <Button mode="outlined" color='#000000' style={styles.capture} onPress={this.hideCameraView} >Back</Button>
 
+                    {showError && <ScanPopup data={data} navigation={this.props.navigation} />}
                 </RNCamera>
-
-
-
             </View>
         );
     }
@@ -118,11 +110,27 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center'
     },
-    capture: {
+    backButton: {
         flex: 0,
         backgroundColor: '#fff',
         borderRadius: 100,
         color: '#000000',
         margin: 40
+    },
+    loading: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    },
+    loading2: {
+        backgroundColor: 'rgba(148, 148, 148, 0.7)',
+        borderRadius: 25,
+        width: 100,
+        height: 100,
     }
 });
