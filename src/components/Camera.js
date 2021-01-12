@@ -92,7 +92,7 @@ export default class Camera extends React.Component {
                     </View>
                     }
 
-                    {showError && <ScanPopup data={data} navigation={this.props.navigation} />}
+                    {showError && <ScanPopup data={data} />}
                 </RNCamera>
             </View>
         );
@@ -126,11 +126,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    },
-    loading2: {
-        backgroundColor: 'rgba(148, 148, 148, 0.7)',
-        borderRadius: 25,
-        width: 100,
-        height: 100,
     }
 });
