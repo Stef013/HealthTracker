@@ -13,6 +13,7 @@ export default class Camera extends React.Component {
             data: [],
             isLoading: false,
             showError: false,
+            shouldReadBarCode: true
         };
     }
 
@@ -22,17 +23,24 @@ export default class Camera extends React.Component {
 
     navigateProduct = () => {
         this.setState({ isLoading: false });
+        this.setState({shouldReadBarCode: true});
         this.props.navigation.navigate('Product', { data: this.state.data });
     }
 
     onBarCodeRead(scanResult) {
+        
         console.log("Type: " + scanResult.type);
         console.log("Scanned Barcode: " + scanResult.data);
         this.setState({ showError: false });
         if (scanResult.data != null) {
-            this.barcode.push(scanResult.data);
-            this.setState({ isLoading: true });
-            this.getProduct(this.barcode);
+            this.setState({shouldReadBarCode: false});
+
+            if(this.barcode !== scanResult.data ){
+                this.barcode.push(scanResult.data);
+                this.setState({ isLoading: true });
+                this.getProduct(this.barcode);
+            }
+            
         }
         return;
     }
@@ -48,24 +56,26 @@ export default class Camera extends React.Component {
         }).then((response) => response.json())
             .then((json) => {
                 this.setState({ data: json });
+                console.log("test:"+ barcode)
                 console.log("Status: " + json.status_verbose)
                 console.log("Product : " + json.code)
             })
             .catch((error) => console.error(error))
             .finally(() => {
+                this.barcode = [];
                 if (this.state.data.status_verbose === "product found") {
                     this.navigateProduct();
                 }
                 else {
                     this.setState({ isLoading: false });
                     this.setState({ showError: true });
+                    this.setState({shouldReadBarCode: true});
                 }
-                this.barcode = [];
             });
     }
 
     render() {
-        const { data, isLoading, showError } = this.state;
+        const { data, isLoading, showError,shouldReadBarCode } = this.state;
 
         return (
             <View style={styles.container}>
@@ -77,7 +87,7 @@ export default class Camera extends React.Component {
                     captureAudio={false}
                     style={styles.scanner}
                     type={RNCamera.Constants.Type.back}
-                    onBarCodeRead={this.onBarCodeRead.bind(this)}
+                    onBarCodeRead={shouldReadBarCode ? this.onBarCodeRead.bind(this) : null}
                     androidCameraPermissionOptions={{
                         title: 'Permission to use camera',
                         message: 'We need your permission to use your camera',

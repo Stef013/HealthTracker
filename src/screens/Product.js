@@ -13,6 +13,7 @@ export default class Product extends React.Component {
         this.product = props.route.params.data.product;
 
         this.saveProduct = this.saveProduct.bind(this);
+        console.log(Moment().format("DD/MM/YYYY HH:mm"));
 
         this.state = {
             success: true,
@@ -46,7 +47,7 @@ export default class Product extends React.Component {
             .then(realm => {
                 realm.write(() => {
                     const prod = realm.create('Consumed', {
-                        date: Moment().format("DD/MM/YYYY HH:mm"),
+                        date: Moment().format("YYYY/MM/DD HH:mm"),
                         barcode: this.product.code,
                         product_name: this.product.product_name,
                         grade: this.Capitalize(this.product.nutriscore_grade),
