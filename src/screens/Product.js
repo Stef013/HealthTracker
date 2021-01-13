@@ -11,6 +11,7 @@ export default class Product extends React.Component {
         super(props);
 
         this.product = props.route.params.data.product;
+        console.log(this.product.product_name)
 
         this.saveProduct = this.saveProduct.bind(this);
         console.log(Moment().format("DD/MM/YYYY HH:mm"));
@@ -25,15 +26,15 @@ export default class Product extends React.Component {
     getNutriScore() {
         switch (this.product.nutriscore_grade) {
             case "a":
-                return <Text style={styles.scoreA}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
+                return <Text style={[styles.score, { color: "#038141" }]}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
             case "b":
-                return <Text style={styles.scoreB}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
+                return <Text style={[styles.score, { color: "#85bb2f" }]}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
             case "c":
-                return <Text style={styles.scoreC}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
+                return <Text style={[styles.score, { color: "#f5cd02" }]}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
             case "d":
-                return <Text style={styles.scoreD}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
+                return <Text style={[styles.score, { color: "#ee8100" }]}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
             case "e":
-                return <Text style={styles.scoreE}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
+                return <Text style={[styles.score, { color: "#e63e11" }]}>{this.Capitalize(this.product.nutriscore_grade)}</Text>
         }
     }
 
@@ -43,7 +44,7 @@ export default class Product extends React.Component {
 
     saveProduct() {
         this.setState({ showLoading: true })
-        Realm.open({ schema: [ConsumedSchema], schemaVersion: 1 })
+        Realm.open({ schema: [ConsumedSchema], schemaVersion: 2 })
             .then(realm => {
                 realm.write(() => {
                     const prod = realm.create('Consumed', {
@@ -53,6 +54,7 @@ export default class Product extends React.Component {
                         grade: this.Capitalize(this.product.nutriscore_grade),
                         quantity: this.product.serving_size,
                         calories: this.product.nutriments['energy-kcal_serving'] + " " + this.product.nutriments['energy-kcal_unit'],
+                        imageURL: this.product.image_url,
                     });
                 });
                 const products = realm.objects('Consumed');
@@ -125,10 +127,10 @@ export default class Product extends React.Component {
                             <Headline style={styles.header}>{this.product.product_name}</Headline>
                             <Subheading>Brand: {this.Capitalize(this.product.brands)}</Subheading>
                             <Subheading >Quantity: {this.product.quantity}</Subheading>
-                            <Subheading >Stores: {this.formatStores(this.product.stores)}</Subheading>
+                            {/* <Subheading >Stores: {this.formatStores(this.product.stores)}</Subheading> */}
 
                             <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                                <Subheading style={{ lineHeight: 40, marginRight: 20 }} >Nutrition Score:</Subheading>
+                                <Subheading style={{ lineHeight: 42, marginRight: 20 }} >Nutrition Score:</Subheading>
                                 {this.getNutriScore()}
                             </View>
                         </View>
@@ -137,7 +139,7 @@ export default class Product extends React.Component {
                     <Divider style={styles.divider} />
                     <View style={{ marginLeft: 10, marginTop: 20, marginRight: 10 }}>
                         <Subheading>Ingredients:</Subheading>
-                        <Paragraph>{this.product.ingredients_text}</Paragraph>
+                        <Paragraph>{this.product.ingredients_text_nl}</Paragraph>
                         <Subheading style={{ marginTop: 15 }}>Allergens:</Subheading>
                         <Paragraph>{this.formatAllergens(this.product.allergens)}</Paragraph>
                     </View>
@@ -190,20 +192,20 @@ export default class Product extends React.Component {
                             <DataTable.Cell numeric>{this.product.nutriments.fiber_serving} {this.product.nutriments.fiber_unit}</DataTable.Cell>
                         </DataTable.Row>
                         <DataTable.Row>
-                            <DataTable.Cell>Calcium</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.calcium_100g} {this.product.nutriments.calcium_unit}</DataTable.Cell>
-                            <DataTable.Cell numeric>{this.product.nutriments.calcium_serving} {this.product.nutriments.calcium_unit}</DataTable.Cell>
-                        </DataTable.Row>
-                        <DataTable.Row>
                             <DataTable.Cell>Sodium</DataTable.Cell>
                             <DataTable.Cell numeric>{this.product.nutriments.sodium_100g} {this.product.nutriments.sodium_unit}</DataTable.Cell>
                             <DataTable.Cell numeric>{this.product.nutriments.sodium_serving} {this.product.nutriments.sodium_unit}</DataTable.Cell>
+                        </DataTable.Row>
+                        <DataTable.Row>
+                            <DataTable.Cell>Calcium</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.calcium_100g} {this.product.nutriments.calcium_unit}</DataTable.Cell>
+                            <DataTable.Cell numeric>{this.product.nutriments.calcium_serving} {this.product.nutriments.calcium_unit}</DataTable.Cell>
                         </DataTable.Row>
                     </DataTable>
                 </ScrollView>
                 {showLoading &&
                     <View>
-                        {isLoading ? <ActivityIndicator large /> : (
+                        {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" /></View> : (
                             <SuccessPopup success={success} navigation={this.props.navigation} />
                         )}
                     </View>
@@ -224,34 +226,10 @@ const styles = StyleSheet.create({
     header: {
         color: "#616161",
     },
-    scoreA: {
+    score: {
         fontSize: 42,
         lineHeight: 50,
         color: "#038141",
-        alignSelf: 'center'
-    },
-    scoreB: {
-        fontSize: 42,
-        lineHeight: 46,
-        color: "#85bb2f",
-        alignSelf: 'center'
-    },
-    scoreC: {
-        fontSize: 42,
-        lineHeight: 50,
-        color: "#f5cd02",
-        alignSelf: 'center'
-    },
-    scoreD: {
-        fontSize: 42,
-        lineHeight: 50,
-        color: "#ee8100",
-        alignSelf: 'center'
-    },
-    scoreE: {
-        fontSize: 42,
-        lineHeight: 50,
-        color: "#e63e11",
         alignSelf: 'center'
     },
     divider: {
@@ -283,8 +261,19 @@ const styles = StyleSheet.create({
         margin: 40
     },
     image: {
-        width: "40%",
+        width: "37%",
         resizeMode: "contain",
         marginRight: 10,
+        marginLeft: 10
+    },
+    loading: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
     }
 })

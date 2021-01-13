@@ -10,9 +10,6 @@ export const ConsumedSchema = {
     grade: 'string',
     quantity: 'string',
     calories: 'string',
+    imageURL: 'string',
   }
 };
-
-// export default new Realm({
-//   schema: [ConsumedSchema]
-// });

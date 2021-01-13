@@ -11,7 +11,7 @@ const SuccessPopup = (props) => {
 
     const navigateProduct = () => {
         hideDialog();
-        props.navigation.navigate('Nutrition');
+        props.navigation.navigate('Root');
     }
     if (props.success) {
         return (

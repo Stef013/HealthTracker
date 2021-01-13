@@ -7,7 +7,7 @@ export default class Timeline extends React.Component {
         return (
             <View style={{ flex: 1 }}>
                 <View style={{ alignItems: 'center' }}>
-                    <Headline style={styles.header}>Last Week's Scores</Headline>
+                    <Headline style={styles.header}>Last Week's Grades</Headline>
                 </View>
             </View>
         );
